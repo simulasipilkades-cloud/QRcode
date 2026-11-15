@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator QR Code Modern</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Library QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333333;
+            margin-bottom: 8px;
+            font-size: 24px;
+        }
+
+        p.subtitle {
+            color: #666666;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #444444;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4f46e5;
+        }
+
+        button {
+            width: 100%;
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #4338ca;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .qr-container {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #qrcode {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 12px;
+            border: 2px dashed #e5e7eb;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        #qrcode img {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .download-btn {
+            background-color: #10b981;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .download-btn:hover {
+            background-color: #059669;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>QR Code Generator</h2>
+        <p class="subtitle">Ubah teks atau URL apa pun menjadi QR Code secara instan.</p>
+        
+        <div class="input-group">
+            <label for="text-input">Masukkan Teks atau URL</label>
+            <input type="text" id="text-input" placeholder="Contoh: https://google.com" autocomplete="off">
+        </div>
+        
+        <button id="generate-btn">Buat QR Code</button>
+
+        <div class="qr-container">
+            <div id="qrcode"></div>
+            <button id="download-btn" class="download-btn">Unduh QR Code</button>
+        </div>
+    </div>
+
+    <script>
+        const textInput = document.getElementById('text-input');
+        const generateBtn = document.getElementById('generate-btn');
+        const qrcodeDiv = document.getElementById('qrcode');
+        const downloadBtn = document.getElementById('download-btn');
+
+        let qrCodeInstance = null;
+
+        function generateQR() {
+            const textValue = textInput.value.trim();
+
+            if (!textValue) {
+                alert('Silakan masukkan teks atau URL terlebih dahulu!');
+                textInput.focus();
+                return;
+            }
+
+            // Kosongkan area QR code sebelumnya
+            qrcodeDiv.innerHTML = "";
+            downloadBtn.style.display = "none";
+
+            // Buat QR code baru
+            qrCodeInstance = new QRCode(qrcodeDiv, {
+                text: textValue,
+                width: 180,
+                height: 180,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Tampilkan tombol download setelah QR dibuat (beri jeda sedikit untuk render gambar)
+            setTimeout(() => {
+                const img = qrcodeDiv.querySelector("img");
+                if (img) {
+                    downloadBtn.style.display = "block";
+                }
+            }, 200);
+        }
+
+        // Event listener saat tombol diklik
+        generateBtn.addEventListener('click', generateQR);
+
+        // Event listener saat menekan tombol "Enter" di keyboard
+        textInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                generateQR();
+            }
+        });
+
+        // Event listener untuk tombol download
+        downloadBtn.addEventListener('click', function () {
+            const img = qrcodeDiv.querySelector("img");
+            if (img) {
+                const imageUrl = img.src;
+                const link = document.createElement('a');
+                link.href = imageUrl;
+                link.download = 'qrcode.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        });
+    </script>
+
+</body>
+</html>
